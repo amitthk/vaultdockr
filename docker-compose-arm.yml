@@ -16,7 +16,7 @@ services:
       -  ${PWD}/conf:/root/conf
     environment:
       DB_TYPE: mysql
-    command: ["/root/vault","server","-config=/root/conf"]
+    command: ["/app/vault","server","-config=/root/conf"]
     networks:
       vpcbr:
         ipv4_address: 10.5.0.5
