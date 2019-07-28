@@ -1,0 +1,44 @@
+version: '2.1'
+services:
+  app:
+    build:
+      dockerfile: Dockerfile_arm 
+      context: .
+      labels: 
+        - "vault:latest"
+        - "registry.hub.docker.com/amitthk/vault-arm:latest"
+    ports:
+      - "8200:8200"
+      - "8201:8201"
+    depends_on:
+      - mysql
+    volumes:
+      -  ${PWD}/conf:/root/conf
+    environment:
+      DB_TYPE: mysql
+    command: ["/root/vault","server","-config=/root/conf"]
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
+
+  mysql:
+    image: hypriot/rpi-mysql:arm-5.5
+    container_name: mysql
+    volumes:
+      - ${PWD}/mysqldata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: p@ssw0rd
+      MYSQL_DATABASE: vaultdb
+      MYSQL_USER: vaultadm
+      MYSQL_PASSWORD: vaultp@ss
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1

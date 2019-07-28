@@ -1,0 +1,9 @@
+FROM armhf/alpine
+WORKDIR /app
+RUN apk --update add unzip wget \
+    && wget https://releases.hashicorp.com/vault/1.1.3/vault_1.1.3_linux_arm.zip --no-check-certificate \
+    && unzip vault_1.1.3_linux_arm.zip \
+    && rm vault_1.1.3_linux_arm.zip
+RUN chmod 0750 /app/vault
+EXPOSE 8200 8201 8202
+CMD ["/app/vault","server","-config=/app/conf"]
